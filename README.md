@@ -29,6 +29,11 @@ Once done open the container with:
 ```
 mlc-open stable_diffusion_container
 ```
+Install required packages from apt-get:
+```
+sudo apt-get install libglib2.0-0 libsm6 libxrender1 libfontconfig1
+```
+
 Navigate to the directory, this repository was cloned to:
 ```
 cd /workspace/stable-diffusion
