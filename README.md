@@ -19,8 +19,25 @@ this model uses a frozen CLIP ViT-L/14 text encoder to condition the model on te
 With its 860M UNet and 123M text encoder, the model is relatively lightweight and runs on a GPU with at least 10GB VRAM.
 See [this section](#stable-diffusion-v1) below and the [model card](https://huggingface.co/CompVis/stable-diffusion).
 
-  
-## Requirements
+
+## Requirements for AIME MLC
+Create an AIME ML container named stable_diffusion_container with the Pytorch version 2.0.1 with the following command:
+```
+mlc-create stable_diffusion_container Pytorch 2.0.1
+```
+Once done open the container with:
+```
+mlc-open stable_diffusion_container
+```
+Navigate to the directory, this repository was cloned to:
+```
+cd /workspace/stable-diffusion
+```
+and execute the following command to install the required pip packages:
+```
+pip install -r requirements.txt
+```
+## Requirements for conda
 A suitable [conda](https://conda.io/) environment named `ldm` can be created
 and activated with:
 
@@ -35,7 +52,8 @@ You can also update an existing [latent diffusion](https://github.com/CompVis/la
 conda install pytorch torchvision -c pytorch
 pip install transformers==4.19.2 diffusers invisible-watermark
 pip install -e .
-``` 
+```
+
 
 
 ## Stable Diffusion v1
