@@ -23,7 +23,7 @@ See [this section](#stable-diffusion-v1) below and the [model card](https://hugg
 ## Requirements for AIME MLC
 Create an AIME ML container named stable_diffusion_container with the Pytorch version 2.0.1 with the following command:
 ```
-mlc-create stable_diffusion_container Pytorch 2.0.1
+mlc-create stable_diffusion_container Pytorch 2.0.1-aime
 ```
 Once done open the container with:
 ```
@@ -31,7 +31,7 @@ mlc-open stable_diffusion_container
 ```
 Install required packages from apt-get:
 ```
-sudo apt-get install libglib2.0-0 libsm6 libxrender1 libfontconfig1
+sudo apt-get install libglib2.0-0 libsm6 libxrender1 libfontconfig1 libgl1
 ```
 
 Navigate to the directory, this repository was cloned to:
