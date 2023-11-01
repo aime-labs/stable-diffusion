@@ -112,12 +112,12 @@ class PLMSSampler(object):
         return samples, intermediates
 
     @torch.no_grad()
-    def plms_sampling(self, cond, shape,
+    def plms_sampling(self, cond, shape, 
                       x_T=None, ddim_use_original_steps=False,
                       callback=None, timesteps=None, quantize_denoised=False,
                       mask=None, x0=None, img_callback=None, log_every_t=100,
                       temperature=1., noise_dropout=0., score_corrector=None, corrector_kwargs=None,
-                      unconditional_guidance_scale=1., unconditional_conditioning=None,):
+                      unconditional_guidance_scale=1., unconditional_conditioning=None):
         device = self.model.betas.device
         b = shape[0]
         if x_T is None:
@@ -140,6 +140,9 @@ class PLMSSampler(object):
         old_eps = []
 
         for i, step in enumerate(iterator):
+            #callback.job_request()
+            progress = 100*(i + 1) / total_steps
+            callback.send_progress_to_api_server(progress)
             index = total_steps - i - 1
             ts = torch.full((b,), step, device=device, dtype=torch.long)
             ts_next = torch.full((b,), time_range[min(i + 1, len(time_range) - 1)], device=device, dtype=torch.long)
@@ -160,7 +163,7 @@ class PLMSSampler(object):
             old_eps.append(e_t)
             if len(old_eps) >= 4:
                 old_eps.pop(0)
-            if callback: callback(i)
+            #if callback: callback(i)
             if img_callback: img_callback(pred_x0, i)
 
             if index % log_every_t == 0 or index == total_steps - 1:

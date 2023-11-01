@@ -20,7 +20,13 @@ With its 860M UNet and 123M text encoder, the model is relatively lightweight an
 See [this section](#stable-diffusion-v1) below and the [model card](https://huggingface.co/CompVis/stable-diffusion).
 
 
-## Requirements for AIME MLC
+## Setup with AIME MLC
+
+Clone this repository:
+```
+git clone https://github.com/aime-labs/stable-diffusion
+```
+
 Create an AIME ML container named stable_diffusion_container with the Pytorch version 2.0.1 with the following command:
 ```
 mlc-create stable_diffusion_container Pytorch 2.0.1-aime
@@ -34,14 +40,28 @@ Install required packages from apt-get:
 sudo apt-get install libglib2.0-0 libsm6 libxrender1 libfontconfig1 libgl1
 ```
 
-Navigate to the directory, this repository was cloned to:
+Navigate to the destination of this repo and install the required pip packages:
+
 ```
-cd /workspace/stable-diffusion
-```
-and execute the following command to install the required pip packages:
-```
+cd /workspace/stable_diffusion
 pip install -r requirements.txt
 ```
+
+## Run with AIME MLC and AIME ML API
+Open the container created above with:
+```
+mlc-open stable_diffusion_container
+```
+Start txt2img worker and connect with a running aime-ml-api-server:
+```
+python3 /workspace/stable_diffusion/scripts/txt2img.py --api_server <address_of_api_server>
+```
+For img2img worker use:
+```
+python3 /workspace/stable_diffusion/scripts/img2img.py --api_server <address_of_api_server>
+```
+
+
 ## Requirements for conda
 A suitable [conda](https://conda.io/) environment named `ldm` can be created
 and activated with:

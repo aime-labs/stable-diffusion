@@ -220,7 +220,7 @@ class DDIMSampler(object):
                 extract_into_tensor(sqrt_one_minus_alphas_cumprod, t, x0.shape) * noise)
 
     @torch.no_grad()
-    def decode(self, x_latent, cond, t_start, unconditional_guidance_scale=1.0, unconditional_conditioning=None,
+    def decode(self, x_latent, cond, t_start, progress_callback, unconditional_guidance_scale=1.0, unconditional_conditioning=None,
                use_original_steps=False):
 
         timesteps = np.arange(self.ddpm_num_timesteps) if use_original_steps else self.ddim_timesteps
@@ -233,6 +233,8 @@ class DDIMSampler(object):
         iterator = tqdm(time_range, desc='Decoding image', total=total_steps)
         x_dec = x_latent
         for i, step in enumerate(iterator):
+            progress = round(100*(i + 1) / total_steps, 1)
+            progress_callback.send_progress_to_api_server(progress)
             index = total_steps - i - 1
             ts = torch.full((x_latent.shape[0],), step, device=x_latent.device, dtype=torch.long)
             x_dec, _ = self.p_sample_ddim(x_dec, cond, ts, index=index, use_original_steps=use_original_steps,
