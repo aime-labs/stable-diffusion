@@ -24,7 +24,7 @@ from ldm.models.diffusion.dpm_solver import DPMSolverSampler
 
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 from transformers import AutoFeatureExtractor
-from api_worker_interface import APIWorkerInterface, ProgressCallback
+from aime_api_worker_interface import APIWorkerInterface
 from typing import Tuple
 
 import requests
@@ -429,6 +429,18 @@ class ProcessOutputCallback():
         if self.local_rank == 0:
             results = {'image': output, 'info':info}
             return self.api_worker.send_job_results(self.job_data, results)
+
+
+
+class ProgressCallback():
+    def __init__(self, api_worker):
+        self.api_worker = api_worker
+        self.job_data = None
+
+    def send_progress_to_api_server(self, progress, progress_data=None):
+        self.api_worker.send_progress(self.job_data, progress, progress_data)
+
+
 
 def get_parameter(parameter_name, parameter_type, default_value, args, job_data, local_rank):
     parameter = default_value

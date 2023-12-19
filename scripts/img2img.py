@@ -22,7 +22,7 @@ from ldm.util import instantiate_from_config
 from ldm.models.diffusion.ddim import DDIMSampler
 from ldm.models.diffusion.plms import PLMSSampler
 
-from api_worker_interface import APIWorkerInterface, ProgressCallback
+from aime_api_worker_interface import APIWorkerInterface
 
 WORKER_JOB_TYPE = "stable_diffusion_img2img"
 WORKER_AUTH_KEY = "5b07e305b50505ca2b3284b4ae5f65d5"
@@ -263,7 +263,7 @@ def main():
 
     api_worker = APIWorkerInterface(opt.api_server, WORKER_JOB_TYPE, WORKER_AUTH_KEY, opt.gpu_id, world_size=world_size, rank=local_rank)
     callback = ProcessOutputCallback(api_worker)
-    progress_bar_callback = ProgressCallback(api_worker)
+    
     #api_server_is_online = True
     while True:
         
@@ -318,7 +318,7 @@ def main():
                                 # encode (scaled latent)
                                 z_enc = sampler.stochastic_encode(init_latent, torch.tensor([t_enc]*batch_size).to(device))
                                 # decode it
-                                samples = sampler.decode(z_enc, c, t_enc, progress_callback=progress_bar_callback, unconditional_guidance_scale=scale,
+                                samples = sampler.decode(z_enc, c, t_enc, progress_callback=callback.progress_bar_callback, unconditional_guidance_scale=scale,
                                                         unconditional_conditioning=uc)
 
                                 x_samples = model.decode_first_stage(samples)
@@ -365,6 +365,10 @@ class ProcessOutputCallback():
     def process_output(self, output, info):
         results = {'image': output, 'info':info}
         return self.api_worker.send_job_results(self.job_data, results)
+
+    def send_progress_to_api_server(self, progress, progress_data=None):
+        self.api_worker.send_progress(self.job_data, progress, progress_data)
+
 
 
 def get_parameter(parameter_name, parameter_type, default_value, args, job_data, local_rank):
